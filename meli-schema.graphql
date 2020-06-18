@@ -1,11 +1,11 @@
 # source: http://localhost:8000/graphql
-# timestamp: Thu Jun 18 2020 13:57:50 GMT-0300 (GMT-03:00)
+# timestamp: Thu Jun 18 2020 14:00:36 GMT-0300 (GMT-03:00)
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
 type Address {
   id: ID
-  street: String
+  streetttt: String
   number: String
   apt: String
   description: String
