@@ -1,10 +1,10 @@
 # source: http://localhost:8000/graphql
-# timestamp: Sat Jun 13 2020 14:04:01 GMT-0300 (Argentina Standard Time)
+# timestamp: Thu Jun 18 2020 13:24:21 GMT-0300 (GMT-03:00)
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
 type Address {
-  idd: ID
+  id: ID
   street: String
   number: String
   apt: String
@@ -49,7 +49,7 @@ type Attributes {
   source: String
   value_id: String
   value_name: String
-  value_struct: String
+  value_struct: ValueStruct
   attribute_group_id: String
   attribute_group_name: String
 }
@@ -117,10 +117,23 @@ type Gift {
   payment: Payment
 }
 
-input giftAcceptInput {
+input GiftAcceptInput {
   giftId: ID!
   accept: Boolean!
   blocked: Boolean!
+}
+
+input GiftBuyInput {
+  giftId: String
+  mepaCollectionId: String
+  mepaCollectionStatus: String
+  mepaExternalReference: String
+  mepaPaymentType: String
+  mepaMerchantOrderId: String
+  mepaPreferenceId: String
+  mepaSiteId: String
+  mepaProcessingMode: String
+  mepaMerchantAccountId: String
 }
 
 input GiftInput {
@@ -262,6 +275,17 @@ type MeliProductDetails {
 input MeliProductInput {
   site: String
   filters: [FilterInput]
+}
+
+type Mutation {
+  createOrUpdateGift(input: GiftInput): Response
+  createOrUpdateGiftSend(input: GiftSendInput!): Response
+  giftAccept(input: GiftAcceptInput!): Response
+  giftBuy(input: GiftBuyInput!): Response
+  giftSelect(input: GiftSelectInput!): Response
+  createOrUpdateAddress(input: AddressInput): Response
+  createOrUpdateUser(input: UserInput): Response
+  createOrUpdateProductFilter(input: ProductFilterInput): Response
 }
 
 type PagingType {
@@ -510,7 +534,7 @@ type ValueStruct {
 type ValueType {
   id: String
   name: String
-  struct: String
+  struct: ValueStruct
   source: String
 }
 
