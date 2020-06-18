@@ -264,16 +264,6 @@ input MeliProductInput {
   filters: [FilterInput]
 }
 
-type Mutation {
-  createOrUpdateAddress(input: AddressInput): Response
-  createOrUpdateUser(input: UserInput): Response
-  createOrUpdateGift(input: GiftInput): Response
-  createOrUpdateProductFilter(input: ProductFilterInput): Response
-  createOrUpdateGiftSend(input: GiftSendInput!): Response
-  giftAccept(input: giftAcceptInput!): Response
-  giftSelect(input: GiftSelectInput!): Response
-}
-
 type PagingType {
   total: Int
   offset: Int
