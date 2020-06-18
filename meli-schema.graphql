@@ -5,7 +5,7 @@ directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITI
 
 type Address {
   id: ID
-  streetttt: String
+  streettt: String
   number: String
   apt: String
   description: String
