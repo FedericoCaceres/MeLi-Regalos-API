@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "Meli Regalos": {
+      "name": "Meli Regalos",
+      "schemaPath": "meli-schema.graphql",
+      "extensions": {
+        "endpoints": {
+          "MeliRegalos Endpoint": {
+            "url": "http://localhost:8000/graphql",
+            "headers": {
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlYTc1NjM0YzUxN2I4MzkyNDE5NTkzZCIsIm5hbWUiOiJGZWRlZWgiLCJsYXN0TmFtZSI6IkNhY2VyZXMiLCJlbWFpbCI6ImZlZGVjYWNlcmVzQGhvdG1haWwuY29tIiwiaWF0IjoxNTkxODQ2NTg1fQ.uqC-Py4MEurVgfoCUyOhk7Q_L0rayJphNUchaJDgaLg"
+            }
+          }
+        }
+      }
+    }
+  }
+}
