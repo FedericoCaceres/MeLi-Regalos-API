@@ -1,5 +1,5 @@
 # source: http://localhost:8000/graphql
-# timestamp: Thu Jun 18 2020 15:32:00 GMT-0300 (GMT-03:00)
+# timestamp: Mon Jun 22 2020 21:23:54 GMT-0300 (GMT-03:00)
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
@@ -26,6 +26,9 @@ input AddressInput {
   description: String
   postalCode: String
   localityId: String
+  name: String
+  contactPhone: String
+  userId: String
 }
 
 type AddressType {
@@ -178,9 +181,23 @@ input GiftSelectProductInput {
   variations: [GiftSelectProductAttributeVariationInput!]
 }
 
+input GiftSendGiftInput {
+  userSenderId: String
+  senderName: String
+  receiverName: String
+  typeId: String
+  reasonId: String
+}
+
 input GiftSendInput {
-  gift: GiftInput!
-  productFilter: ProductFilterInput!
+  gift: GiftSendGiftInput!
+  productFilter: GiftSendProductFilterInput!
+}
+
+input GiftSendProductFilterInput {
+  maxAmount: Float
+  categories: [CategoryInput]
+  products: [String]
 }
 
 type GiftType {
@@ -278,14 +295,14 @@ input MeliProductInput {
 }
 
 type Mutation {
-  createOrUpdateGift(input: GiftInput): Response
-  createOrUpdateGiftSend(input: GiftSendInput!): Response
+  updateGift(input: UpdateGiftInput!): Response
+  giftSend(input: GiftSendInput!): Response
   giftAccept(input: GiftAcceptInput!): Response
   giftBuy(input: GiftBuyInput!): Response
   giftSelect(input: GiftSelectInput!): Response
   createOrUpdateAddress(input: AddressInput): Response
-  createOrUpdateUser(input: UserInput): Response
-  createOrUpdateProductFilter(input: ProductFilterInput): Response
+  updateUser(input: UserInput): Response
+  updateProductFilter(input: ProductFilterInput): Response
 }
 
 type PagingType {
@@ -344,8 +361,12 @@ input ProductFilterInput {
   giftId: String
   maxAmount: Float
   categories: [CategoryInput]
-  products: [String]
-  status: StatusObjectInput
+  products: [ProductKeyValue]
+}
+
+input ProductKeyValue {
+  meliId: String
+  name: String
 }
 
 type ProductsChosen {
@@ -492,6 +513,14 @@ input StatusObjectInput {
   secondary: [StatusInput]
 }
 
+input UpdateGiftInput {
+  id: ID!
+  senderName: String
+  receiverName: String
+  typeId: String
+  reasonId: String
+}
+
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
@@ -514,7 +543,6 @@ input UserInput {
   email: String
   phone: String
   avatarUrl: String
-  status: StatusObjectInput
   meliId: String
   meliNickname: String
 }
@@ -527,7 +555,7 @@ type ValueFilterType {
 }
 
 type ValueStruct {
-  number: Int
+  number: Float
   unit: String
 }
 
