@@ -1,5 +1,5 @@
 # source: http://localhost:8000/graphql
-# timestamp: Wed Jun 24 2020 15:11:45 GMT-0300 (GMT-03:00)
+# timestamp: Thu Aug 27 2020 20:09:26 GMT-0300 (GMT-03:00)
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
@@ -27,6 +27,7 @@ input AddressInput {
   postalCode: String
   localityId: String
   name: String
+  failedDeliveries: Int
   contactPhone: String
   userId: String
 }
@@ -139,6 +140,17 @@ input GiftBuyInput {
   mepaMerchantAccountId: String
 }
 
+input GiftDiscardInput {
+  giftId: String
+  userId: String
+}
+
+input GiftInitInput {
+  userSenderId: String
+  senderName: String
+  receiverName: String
+}
+
 input GiftInput {
   id: ID
   userSenderId: String
@@ -182,6 +194,7 @@ input GiftSelectProductInput {
 }
 
 input GiftSendGiftInput {
+  id: ID!
   userSenderId: String
   senderName: String
   receiverName: String
@@ -292,6 +305,8 @@ type MeliProductDetails {
 input MeliProductInput {
   site: String
   filters: [FilterInput]
+  maxAmount: Float!
+  page: Int
 }
 
 type Mutation {
@@ -300,7 +315,12 @@ type Mutation {
   giftAccept(input: GiftAcceptInput!): Response
   giftBuy(input: GiftBuyInput!): Response
   giftSelect(input: GiftSelectInput!): Response
+  giftDiscardBySender(input: GiftDiscardInput!): Response
+  giftDiscardByReceiver(input: GiftDiscardInput!): Response
+  giftInit(input: GiftInitInput!): Response
   createOrUpdateAddress(input: AddressInput): Response
+  addressActive(input: statusAddressInput!): Response
+  addressInactive(input: statusAddressInput!): Response
   updateUser(input: UserInput): Response
   updateProductFilter(input: ProductFilterInput): Response
 }
@@ -375,18 +395,29 @@ type ProductsChosen {
   chosenDate: String
 }
 
+type ProductsToChoose {
+  products: [ProductsToList]
+  productsByCategories: [ProductsToList]
+  totalPages: Int
+  actualPage: Int
+}
+
+type ProductsToList {
+  meliId: String!
+  name: String!
+  image: String!
+}
+
 type Query {
   getAddressById(id: ID!): Address
-  getAllAddresses(filter: FilterInput): [Address]
   getUserById(id: ID): User
-  getAllUsers(filter: FilterInput): [User]
   getGiftReasonById(id: ID): GiftReason
-  getAllGiftReasons(filter: FilterInput): [GiftReason]
+  getAllGiftReasons: [GiftReason]
   getGiftTypeById(id: ID): GiftType
-  getAllGiftTypes(filter: FilterInput): [GiftType]
+  getAllGiftTypes: [GiftType]
   getGiftById(id: ID!): Gift
   getProductFilterById(id: ID): ProductFilter
-  getAllProductFilters(filter: FilterInput): [ProductFilter]
+  getProductsToChoose(giftId: ID!, site: String, page: Int): ProductsToChoose
   getMeliCategoryById(id: ID): MeliCategory
   getAllMeliCategories(site: String): [MeliCategory]
   getAllMeliProducts(input: MeliProductInput): MeliProduct
@@ -502,6 +533,11 @@ type Status {
   name: String
 }
 
+input statusAddressInput {
+  addressId: String
+  userId: String
+}
+
 input StatusInput {
   id: ID
   name: String
@@ -534,6 +570,7 @@ type User {
   avatarUrl: String
   giftSent: [Gift]
   giftReceived: [Gift]
+  points: Int
 }
 
 input UserInput {
