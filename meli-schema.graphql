@@ -1,9 +1,5 @@
 # source: http://localhost:8000/graphql
-<<<<<<< HEAD
-# timestamp: Thu Aug 27 2020 21:14:08 GMT-0300 (GMT-03:00)
-=======
-# timestamp: Thu Aug 27 2020 20:49:00 GMT-0300 (GMT-03:00)
->>>>>>> 12950dc5496230b1f117d792239386925bbb400e
+# timestamp: Thu Aug 27 2020 21:18:19 GMT-0300 (GMT-03:00)
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
