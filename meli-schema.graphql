@@ -1,5 +1,5 @@
 # source: http://localhost:8000/graphql
-# timestamp: Fri Sep 04 2020 21:21:45 GMT-0300 (GMT-03:00)
+# timestamp: Sat Sep 05 2020 13:50:47 GMT-0300 (GMT-03:00)
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
@@ -148,6 +148,11 @@ input GiftAcceptInput {
   giftId: ID!
   accept: Boolean!
   blocked: Boolean!
+}
+
+type GiftBox {
+  products: [ProductsToList]
+  categories: [Category]
 }
 
 input GiftBuyInput {
@@ -424,17 +429,11 @@ type ProductsChosen {
   chosenDate: String
 }
 
-type ProductsToChoose {
-  products: [ProductsToList]
-  productsByCategories: [ProductsToList]
-  totalPages: Int
-  actualPage: Int
-}
-
 type ProductsToList {
   meliId: String!
   name: String!
   image: String!
+  price: Float!
 }
 
 type Query {
@@ -446,7 +445,7 @@ type Query {
   getAllGiftTypes: [GiftType]
   getGiftById(id: ID!): Gift
   getProductFilterById(id: ID): ProductFilter
-  getProductsToChoose(giftId: ID!, site: String, page: Int): ProductsToChoose
+  getGiftBox(giftId: ID!): GiftBox
   getMeliCategoryById(id: ID): MeliCategory
   getAllMeliCategories(site: String): [MeliCategory]
   getAllMeliProducts(input: MeliProductInput): MeliProduct
