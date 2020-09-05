@@ -1,5 +1,5 @@
 # source: http://localhost:8000/graphql
-# timestamp: Thu Aug 27 2020 21:18:19 GMT-0300 (GMT-03:00)
+# timestamp: Fri Sep 04 2020 21:21:45 GMT-0300 (GMT-03:00)
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
@@ -71,6 +71,29 @@ type Category {
 input CategoryInput {
   meliId: String
   name: String
+}
+
+input CreateGiftStepFourInput {
+  giftId: ID!
+}
+
+input CreateGiftStepOneInput {
+  giftId: ID
+  senderName: String!
+  receiverName: String!
+}
+
+input CreateGiftStepThreeInput {
+  giftId: ID!
+  categories: [CategoryInput]
+  products: [ProductKeyValue]
+}
+
+input CreateGiftStepTwoInput {
+  giftId: ID!
+  typeId: String!
+  reasonId: String!
+  maxAmount: Float!
 }
 
 type Delivery {
@@ -320,6 +343,10 @@ type Mutation {
   giftDiscardBySender(input: GiftDiscardInput!): Response
   giftDiscardByReceiver(input: GiftDiscardInput!): Response
   giftInit(input: GiftInitInput!): Response
+  createGiftStepOne(input: CreateGiftStepOneInput): ResponseId
+  createGiftStepTwo(input: CreateGiftStepTwoInput): Response
+  createGiftStepThree(input: CreateGiftStepThreeInput): Response
+  createGiftStepFour(input: CreateGiftStepFourInput): Response
   createOrUpdateAddress(input: AddressInput): Response
   addressActive(input: statusAddressInput!): Response
   addressInactive(input: statusAddressInput!): Response
@@ -429,6 +456,12 @@ type Query {
 type Response {
   success: Boolean
   message: [String]
+}
+
+type ResponseId {
+  success: Boolean
+  message: [String]
+  id: ID
 }
 
 type ResultsType {
