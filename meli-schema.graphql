@@ -1,5 +1,5 @@
 # source: http://localhost:8000/graphql
-# timestamp: Sat Sep 05 2020 13:50:47 GMT-0300 (GMT-03:00)
+# timestamp: Tue Sep 29 2020 21:45:17 GMT-0300 (GMT-03:00)
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
@@ -142,6 +142,7 @@ type Gift {
   productFilter: ProductFilter
   delivery: Delivery
   payment: Payment
+  status: Status
 }
 
 input GiftAcceptInput {
@@ -359,6 +360,13 @@ type Mutation {
   updateProductFilter(input: ProductFilterInput): Response
 }
 
+type Notification {
+  title: String
+  body: String
+  footer: String
+  icon: String
+}
+
 type PagingType {
   total: Int
   offset: Int
@@ -444,6 +452,9 @@ type Query {
   getGiftTypeById(id: ID): GiftType
   getAllGiftTypes: [GiftType]
   getGiftById(id: ID!): Gift
+  getAllGiftStatus: [Status]
+  getAllGiftsSended(fromDate: String, toDate: String, statusId: String): [Gift]
+  getAllGiftsReceived(fromDate: String, toDate: String, statusId: String): [Gift]
   getProductFilterById(id: ID): ProductFilter
   getGiftBox(giftId: ID!): GiftBox
   getMeliCategoryById(id: ID): MeliCategory
@@ -565,6 +576,7 @@ type ShortUser {
 type Status {
   id: ID
   name: String
+  isMain: Boolean
 }
 
 input statusAddressInput {
@@ -581,6 +593,10 @@ input StatusInput {
 input StatusObjectInput {
   main: StatusInput
   secondary: [StatusInput]
+}
+
+type Subscription {
+  giftAcceptedOrRejected(userId: String!): Notification
 }
 
 input UpdateGiftInput {
