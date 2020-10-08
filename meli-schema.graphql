@@ -1,5 +1,5 @@
 # source: http://localhost:8000/graphql
-# timestamp: Tue Sep 29 2020 21:45:17 GMT-0300 (GMT-03:00)
+# timestamp: Thu Oct 08 2020 13:21:29 GMT-0300 (GMT-03:00)
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
@@ -27,9 +27,7 @@ input AddressInput {
   postalCode: String
   localityId: String
   name: String
-  failedDeliveries: Int
   contactPhone: String
-  userId: String
 }
 
 type AddressType {
@@ -134,6 +132,7 @@ type Gift {
   id: ID
   userSender: ShortUser
   userReceiver: ShortUser
+  createdDate: String
   reason: String
   type: String
   senderName: String
@@ -169,17 +168,6 @@ input GiftBuyInput {
   mepaMerchantAccountId: String
 }
 
-input GiftDiscardInput {
-  giftId: String
-  userId: String
-}
-
-input GiftInitInput {
-  userSenderId: String
-  senderName: String
-  receiverName: String
-}
-
 input GiftInput {
   id: ID
   userSenderId: String
@@ -199,7 +187,6 @@ type GiftReason {
 input GiftSelectInput {
   giftId: ID!
   addressId: ID!
-  userReceiverId: ID!
   products: [GiftSelectProductInput!]!
 }
 
@@ -229,11 +216,6 @@ input GiftSendGiftInput {
   receiverName: String
   typeId: String
   reasonId: String
-}
-
-input GiftSendInput {
-  gift: GiftSendGiftInput!
-  productFilter: GiftSendProductFilterInput!
 }
 
 input GiftSendProductFilterInput {
@@ -340,22 +322,43 @@ input MeliProductInput {
   page: Int
 }
 
+type MostChosen {
+  meliId: String
+  name: String
+  image: String
+  rating: Float
+}
+
+enum MostChosenBy {
+  SENDERS
+  RECEIVERS
+}
+
+enum MostChosenFilter {
+  CATEGORIES
+  PRODUCTS
+}
+
+enum MostChosenPeriod {
+  FOUR_WEEKS
+  TWO_WEEKS
+  ALL
+}
+
 type Mutation {
   updateGift(input: UpdateGiftInput!): Response
-  giftSend(input: GiftSendInput!): Response
   giftAccept(input: GiftAcceptInput!): Response
   giftBuy(input: GiftBuyInput!): Response
   giftSelect(input: GiftSelectInput!): Response
-  giftDiscardBySender(input: GiftDiscardInput!): Response
-  giftDiscardByReceiver(input: GiftDiscardInput!): Response
-  giftInit(input: GiftInitInput!): Response
+  giftDiscardBySender(giftId: String!): Response
+  giftDiscardByReceiver(giftId: String!): Response
   createGiftStepOne(input: CreateGiftStepOneInput): ResponseId
   createGiftStepTwo(input: CreateGiftStepTwoInput): Response
   createGiftStepThree(input: CreateGiftStepThreeInput): Response
   createGiftStepFour(input: CreateGiftStepFourInput): Response
   createOrUpdateAddress(input: AddressInput): Response
-  addressActive(input: statusAddressInput!): Response
-  addressInactive(input: statusAddressInput!): Response
+  addressActive(addressId: String!): Response
+  addressInactive(addressId: String!): Response
   updateUser(input: UserInput): Response
   updateProductFilter(input: ProductFilterInput): Response
 }
@@ -419,7 +422,6 @@ type ProductFilter {
 }
 
 input ProductFilterInput {
-  id: ID
   giftId: String
   maxAmount: Float
   categories: [CategoryInput]
@@ -461,6 +463,7 @@ type Query {
   getAllMeliCategories(site: String): [MeliCategory]
   getAllMeliProducts(input: MeliProductInput): MeliProduct
   getMeliProductDetailsById(id: ID): MeliProductDetails
+  getMostChosen(filter: MostChosenFilter!, choosenBy: MostChosenBy!, periodActivity: MostChosenPeriod!, limit: Int): [MostChosen]
 }
 
 type Response {
@@ -577,11 +580,6 @@ type Status {
   id: ID
   name: String
   isMain: Boolean
-}
-
-input statusAddressInput {
-  addressId: String
-  userId: String
 }
 
 input StatusInput {
