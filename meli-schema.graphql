@@ -1,5 +1,5 @@
 # source: http://localhost:8000/graphql
-# timestamp: Thu Oct 08 2020 13:21:29 GMT-0300 (GMT-03:00)
+# timestamp: Sat Oct 24 2020 02:13:27 GMT-0300 (GMT-03:00)
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
@@ -142,6 +142,7 @@ type Gift {
   delivery: Delivery
   payment: Payment
   status: Status
+  lastUpdate: String
 }
 
 input GiftAcceptInput {
@@ -157,6 +158,7 @@ type GiftBox {
 
 input GiftBuyInput {
   giftId: String
+  addressId: String
   mepaCollectionId: String
   mepaCollectionStatus: String
   mepaExternalReference: String
@@ -186,7 +188,7 @@ type GiftReason {
 
 input GiftSelectInput {
   giftId: ID!
-  addressId: ID!
+  addressId: String
   products: [GiftSelectProductInput!]!
 }
 
@@ -222,6 +224,12 @@ input GiftSendProductFilterInput {
   maxAmount: Float
   categories: [CategoryInput]
   products: [ProductKeyValue]
+}
+
+type GiftStatusesHistory {
+  status: Status
+  date: String
+  user: ShortUser
 }
 
 type GiftType {
@@ -356,7 +364,8 @@ type Mutation {
   createGiftStepTwo(input: CreateGiftStepTwoInput): Response
   createGiftStepThree(input: CreateGiftStepThreeInput): Response
   createGiftStepFour(input: CreateGiftStepFourInput): Response
-  createOrUpdateAddress(input: AddressInput): Response
+  resetGift(giftId: String!): Response
+  createOrUpdateAddress(input: AddressInput): ResponseId
   addressActive(addressId: String!): Response
   addressInactive(addressId: String!): Response
   updateUser(input: UserInput): Response
@@ -431,6 +440,7 @@ input ProductFilterInput {
 input ProductKeyValue {
   meliId: String
   name: String
+  price: Float
 }
 
 type ProductsChosen {
@@ -448,15 +458,16 @@ type ProductsToList {
 
 type Query {
   getAddressById(id: ID!): Address
-  getUserById(id: ID): User
+  getUser: User
   getGiftReasonById(id: ID): GiftReason
   getAllGiftReasons: [GiftReason]
   getGiftTypeById(id: ID): GiftType
   getAllGiftTypes: [GiftType]
   getGiftById(id: ID!): Gift
   getAllGiftStatus: [Status]
-  getAllGiftsSended(fromDate: String, toDate: String, statusId: String): [Gift]
-  getAllGiftsReceived(fromDate: String, toDate: String, statusId: String): [Gift]
+  getAllGiftsSent(fromDate: String, toDate: String, statusId: String, sort: Sort): [Gift]
+  getAllGiftsReceived(fromDate: String, toDate: String, statusId: String, sort: Sort): [Gift]
+  getGiftStatusesHistory(id: ID!): [GiftStatusesHistory]
   getProductFilterById(id: ID): ProductFilter
   getGiftBox(giftId: ID!): GiftBox
   getMeliCategoryById(id: ID): MeliCategory
@@ -574,6 +585,11 @@ type ShortUser {
   name: String
   lastName: String
   avatarUrl: String
+}
+
+enum Sort {
+  ASC
+  DESC
 }
 
 type Status {
