@@ -1,5 +1,5 @@
 # source: http://localhost:8000/graphql
-# timestamp: Sat Oct 24 2020 02:13:27 GMT-0300 (GMT-03:00)
+# timestamp: Mon Oct 26 2020 11:36:42 GMT-0300 (GMT-03:00)
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
@@ -427,7 +427,7 @@ type ProductFilter {
   id: ID
   maxAmount: Float
   categories: [Item]
-  products: [Item]
+  products: [shortProduct]
 }
 
 input ProductFilterInput {
@@ -578,6 +578,13 @@ type Shipping {
   local_pick_up: Boolean
   logistic_type: String
   store_pick_up: Boolean
+}
+
+type shortProduct {
+  meliId: String
+  name: String
+  price: Float
+  pictures: [String]
 }
 
 type ShortUser {
