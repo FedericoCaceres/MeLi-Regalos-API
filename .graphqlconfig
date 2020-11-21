@@ -8,7 +8,7 @@
           "MeliRegalos Endpoint": {
             "url": "http://localhost:8000/graphql",
             "headers": {
-              "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmODNhMjhhYThiM2FiNjJjYzQ1Y2VkYyIsIm5hbWUiOiJUZXN0IiwibGFzdE5hbWUiOiJUZXN0IiwiZW1haWwiOiJ0ZXN0X3VzZXJfOTkyNDM1MkB0ZXN0dXNlci5jb20iLCJpYXQiOjE2MDI4MDIyODh9.3r6grnachoDKbuAzCWWN_atJoMbG7rNdOsY4ZYYP60E"
+              "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmODNhMjhhYThiM2FiNjJjYzQ1Y2VkYyIsIm5hbWUiOiJUZXN0MSIsImxhc3ROYW1lIjoiVGVzdCIsImVtYWlsIjoidGVzdF91c2VyXzk5MjQzNTJAdGVzdHVzZXIuY29tIiwiaWF0IjoxNjA0MDE1NDUyfQ.EH_O4vc2tXQm8H6x5gOn36T1D-JUsMXiHIQCPwLE8js"
             }
           }
         }
