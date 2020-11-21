@@ -1,5 +1,5 @@
 # source: http://localhost:8000/graphql
-# timestamp: Mon Oct 26 2020 11:52:18 GMT-0300 (GMT-03:00)
+# timestamp: Fri Nov 20 2020 23:30:32 GMT-0300 (Argentina Standard Time)
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope) on FIELD_DEFINITION | OBJECT | INTERFACE
 
@@ -16,6 +16,7 @@ type Address {
   country: String
   province: String
   user: ShortUser
+  status: Status
 }
 
 input AddressInput {
@@ -73,6 +74,7 @@ input CategoryInput {
 
 input CreateGiftStepFourInput {
   giftId: ID!
+  edit: Boolean
 }
 
 input CreateGiftStepOneInput {
@@ -98,6 +100,14 @@ type Delivery {
   id: ID
   deliveredDate: String
   deliveryAddress: Address
+  statusesHistory: [StatusesHistory]
+}
+
+enum DeliveryStatus {
+  ACTIVE
+  INPROGRESS
+  FAILED
+  DONE
 }
 
 type Descriptions {
@@ -189,7 +199,7 @@ type GiftReason {
 input GiftSelectInput {
   giftId: ID!
   addressId: String
-  products: [GiftSelectProductInput!]!
+  products: [ProductInput]!
 }
 
 input GiftSelectProductAttributeVariationInput {
@@ -226,12 +236,6 @@ input GiftSendProductFilterInput {
   products: [ProductKeyValue]
 }
 
-type GiftStatusesHistory {
-  status: Status
-  date: String
-  user: ShortUser
-}
-
 type GiftType {
   id: ID
   name: String
@@ -252,6 +256,11 @@ type InstallmentsType {
 
 type Item {
   meliId: String
+  name: String
+}
+
+type Locality {
+  id: ID
   name: String
 }
 
@@ -330,6 +339,11 @@ input MeliProductInput {
   page: Int
 }
 
+input MepaPaymentInput {
+  giftId: ID!
+  products: [ProductKeyValue]
+}
+
 type MostChosen {
   meliId: String
   name: String
@@ -354,7 +368,6 @@ enum MostChosenPeriod {
 }
 
 type Mutation {
-  updateGift(input: UpdateGiftInput!): Response
   giftAccept(input: GiftAcceptInput!): Response
   giftBuy(input: GiftBuyInput!): Response
   giftSelect(input: GiftSelectInput!): Response
@@ -369,7 +382,7 @@ type Mutation {
   addressActive(addressId: String!): Response
   addressInactive(addressId: String!): Response
   updateUser(input: UserInput): Response
-  updateProductFilter(input: ProductFilterInput): Response
+  changeStatusDelivery(input: StatusDelivery!): Response
 }
 
 type Notification {
@@ -410,10 +423,8 @@ type Product {
   id: ID
   title: String
   price: Float
-  pictures: [String]
-  warranty: String
-  attributes: [Attribute]
-  variations: [Attribute]
+  pictures: String
+  meliCategoryId: String
 }
 
 input ProductChosenInput {
@@ -437,11 +448,20 @@ input ProductFilterInput {
   products: [ProductKeyValue]
 }
 
+input ProductInput {
+  title: String!
+  price: Float!
+  pictures: String!
+  meliCategoryId: String!
+  meliProductId: String!
+}
+
 input ProductKeyValue {
-  meliId: String
-  name: String
-  price: Float
-  picture: String
+  meliId: String!
+  name: String!
+  price: Float!
+  picture: String!
+  meliCategoryId: String!
 }
 
 type ProductsChosen {
@@ -457,6 +477,11 @@ type ProductsToList {
   price: Float!
 }
 
+type Province {
+  id: ID
+  name: String
+}
+
 type Query {
   getAddressById(id: ID!): Address
   getUser: User
@@ -468,14 +493,21 @@ type Query {
   getAllGiftStatus: [Status]
   getAllGiftsSent(fromDate: String, toDate: String, statusId: String, sort: Sort): [Gift]
   getAllGiftsReceived(fromDate: String, toDate: String, statusId: String, sort: Sort): [Gift]
-  getGiftStatusesHistory(id: ID!): [GiftStatusesHistory]
+  getGiftStatusesHistory(id: ID!): [StatusesHistory]
   getProductFilterById(id: ID): ProductFilter
   getGiftBox(giftId: ID!): GiftBox
   getMeliCategoryById(id: ID): MeliCategory
   getAllMeliCategories(site: String): [MeliCategory]
   getAllMeliProducts(input: MeliProductInput): MeliProduct
   getMeliProductDetailsById(id: ID): MeliProductDetails
+  getPaymentUrl(input: MepaPaymentInput): String
   getMostChosen(filter: MostChosenFilter!, choosenBy: MostChosenBy!, periodActivity: MostChosenPeriod!, limit: Int): [MostChosen]
+  statisticsGifts(selector: SelectorStatistics!): [StatisticsGifts]
+  statisticsBudget(selector: SelectorStatistics!): [StatisticsBudget]
+  statisticsBudgetAvg(selector: SelectorStatistics!): Float
+  statisticsCategories(selector: SelectorStatistics!): [StatisticsCategories]
+  getAllProvinces: [Province]
+  getLocalitiesByProvinceId(provinceId: String!): [Locality]
 }
 
 type Response {
@@ -538,6 +570,11 @@ type SearchLocation {
   state: IdNameType
 }
 
+enum SelectorStatistics {
+  SENT
+  RECEIVED
+}
+
 type SellerAddress {
   id: String
   comment: String
@@ -586,6 +623,7 @@ type shortProduct {
   name: String
   price: Float
   picture: String
+  meliCategoryId: String
 }
 
 type ShortUser {
@@ -600,10 +638,36 @@ enum Sort {
   DESC
 }
 
+type StatisticsBudget {
+  month: String
+  amount: Float
+}
+
+type StatisticsCategories {
+  name: String
+  amount: Int
+}
+
+type StatisticsGifts {
+  month: String
+  amount: Int
+}
+
 type Status {
   id: ID
   name: String
   isMain: Boolean
+}
+
+input StatusDelivery {
+  giftId: String!
+  status: DeliveryStatus!
+}
+
+type StatusesHistory {
+  status: Status
+  date: String
+  user: ShortUser
 }
 
 input StatusInput {
@@ -619,14 +683,6 @@ input StatusObjectInput {
 
 type Subscription {
   giftAcceptedOrRejected(userId: String!): Notification
-}
-
-input UpdateGiftInput {
-  id: ID!
-  senderName: String
-  receiverName: String
-  typeId: String
-  reasonId: String
 }
 
 """The `Upload` scalar type represents a file upload."""
